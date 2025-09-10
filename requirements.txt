@@ -1,0 +1,10 @@
+flask
+langchain
+langchain-google-genai
+langchain-community
+chromadb
+sentence-transformers
+pypdf
+python-dotenv
+torch
+transformers

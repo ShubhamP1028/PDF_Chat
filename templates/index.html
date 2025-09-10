@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDFQuery - Chat with your PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1><b>PDF-Chat</b></h1>
+        <p>Upload a PDF and ask questions about its content</p>
+        
+        <div id="upload-section">
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".pdf" required>
+                <button type="submit">Upload & Process PDF</button>
+            </form>
+            <div id="upload-status"></div>
+        </div>
+        
+        <div id="chat-section" style="display: none;">
+            <h3>Chat with: <span id="current-filename"></span></h3>
+            <div id="chat-container">
+                <div id="chat-messages"></div>
+                <form id="chat-form">
+                    <input type="text" id="message-input" placeholder="Ask something about the PDF...">
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
