@@ -15,7 +15,7 @@
 
 body {
     font-family: 'Alamanca', 'Circuit', Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #393232 0%, #550527 100%);
+    background: linear-gradient(135deg, #240046 0%, #550527 100%, #240046 50%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -23,17 +23,17 @@ body {
 .container {
     max-width: 800px;
     margin: 0 auto;
-    background: white;
+    background: #252422;
     border-radius: 15px;
-    border-color: #f1f1f1;
+    border-color: black;
     border-width: 5px;
     border-style: dashed;
-    box-shadow: 0 20px 40px rgba(241, 239, 239, 0.975);
+    box-shadow: 0 20px 40px rgba(92, 14, 51, 0.536);
     overflow: hidden;
 }
 
 h1 {
-    background: linear-gradient(135deg, #240046 0%, #550527 100%), #240046 70%;
+    background: linear-gradient(135deg, #240046 0%, #550527 100%, #240046 70%);
     font-family: Alamanca;
     color: white;
     text-align: center;
@@ -65,9 +65,9 @@ p {
 
 input[type="file"] {
     padding: 15px;
-    border: 2px dashed #667eea;
+    border: 2px dashed #ffe6e6;
     border-radius: 10px;
-    background: #f8f9ff;
+    background: #252422;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -76,12 +76,13 @@ input[type="file"] {
 }
 
 input[type="file"]:hover {
-    border-color: #764ba2;
-    background: #f0f2ff;
+    border-color: darkred;
+    background: #252422;
+    color: #ffe6e6;
 }
 
 button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #240046 0%, #550527 100%, #240046 70%);
     color: white;
     font-family: Alamanca;
     border: none;
@@ -134,14 +135,14 @@ button:active {
     border: 2px solid #e0e0e0;
     border-radius: 15px;
     overflow: hidden;
-    background: #fafafa;
+    background: #252422;
 }
 
 #chat-messages {
     height: 400px;
     overflow-y: auto;
     padding: 20px;
-    background: white;
+    background: #252422;
 }
 
 .message {
@@ -178,7 +179,7 @@ button:active {
 #chat-form {
     display: flex;
     padding: 20px;
-    background: #f8f9ff;
+    background: #252422;
     border-top: 1px solid #e0e0e0;
 }
 
