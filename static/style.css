@@ -120,10 +120,85 @@ button:active {
     padding: 40px;
 }
 
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
 #chat-section h3 {
     color: #333;
-    margin-bottom: 20px;
+    margin: 0;
     font-size: 1.3em;
+}
+
+.document-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+#new-session-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+}
+
+#new-session-btn:hover {
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.documents-list {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}
+
+.documents-list h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.document-item {
+    display: inline-block;
+    background: white;
+    padding: 8px 12px;
+    margin: 5px 5px 5px 0;
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+    font-size: 0.9em;
+    color: #495057;
+}
+
+.document-item:first-child {
+    background: #e3f2fd;
+    border-color: #007bff;
+    color: #007bff;
+    font-weight: 600;
 }
 
 #current-filename {
@@ -159,7 +234,9 @@ button:active {
     color: white;
     margin-left:auto;
     text-align: right;
-    font-family: Cursive;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
     border: 1px solid #e0e0e0;
 }
 
@@ -167,7 +244,9 @@ button:active {
     background: #f0f2ff;
     color: #333;
     border: 1px solid #e0e0e0;
-    font-family: Cursive;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
 .error-message {
@@ -222,6 +301,37 @@ button:active {
     background: #764ba2;
 }
 
+/* New styles for enhanced features */
+.confidence {
+    font-size: 12px;
+    color: #666;
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    display: inline-block;
+    border-left: 3px solid #28a745;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+}
+
+.source-page {
+    font-size: 12px;
+    color: #007bff;
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #e3f2fd;
+    border-radius: 15px;
+    display: inline-block;
+    border-left: 3px solid #007bff;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.answer {
+    margin-bottom: 10px;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     .container {
@@ -244,5 +354,26 @@ button:active {
     
     .message {
         max-width: 95%;
+    }
+    
+    .source-page {
+        font-size: 0.8em;
+        padding: 4px 8px;
+    }
+    
+    .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .document-controls {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .control-btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
     }
 }

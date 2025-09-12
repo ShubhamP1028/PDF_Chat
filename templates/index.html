@@ -11,14 +11,21 @@
         
         <div id="upload-section">
             <form id="upload-form" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".pdf" required>
+                <input type="file" name="file" accept=".pdf" required multiple="false">
                 <button type="submit">Upload & Process PDF</button>
             </form>
             <div id="upload-status"></div>
         </div>
         
         <div id="chat-section" style="display: none;">
-            <h3>Chat with: <span id="current-filename"></span></h3>
+            <div class="chat-header">
+                <h3>Chat with: <span id="current-filename"></span></h3>
+                <div class="document-controls">
+                    <button id="add-document-btn" class="control-btn">Add Document</button>
+                    <button id="new-session-btn" class="control-btn">New Session</button>
+                </div>
+            </div>
+            <div id="current-documents" class="documents-list"></div>
             <div id="chat-container">
                 <div id="chat-messages"></div>
                 <form id="chat-form">
@@ -27,6 +34,10 @@
                 </form>
             </div>
         </div>
+        
+        <!-- Hidden file input for adding documents -->
+        <input type="file" id="add-document-input" accept=".pdf" multiple="false" style="display: none;">
+        <input type="file" id="new-session-input" accept=".pdf" multiple="false" style="display: none;">
     </div>
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>
