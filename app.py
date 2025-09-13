@@ -224,6 +224,13 @@ def get_documents():
         'total_documents': len(current_documents)
     })
 
+@app.route('/clear', methods=['POST'])
+def clear_chat():
+    """Clear chat history (frontend only)."""
+    # For now, just return success - the frontend handles clearing
+    # In a more advanced implementation, you might want to clear backend state
+    return jsonify({'success': True, 'message': 'Chat cleared'})
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """Handle chat messages."""

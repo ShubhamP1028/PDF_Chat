@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Chat - Interactive Document Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: #2d3748;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #4299e1;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #4a5568;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #4299e1;
+        }
+        
+        .upload-area i {
+            font-size: 32px;
+            color: #4299e1;
+            margin-bottom: 10px;
+        }
+        
+        .upload-area p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #3182ce;
+        }
+        
+        .history-section h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #a0aec0;
+        }
+        
+        .history-list {
+            list-style: none;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .history-item:hover {
+            background: #4a5568;
+        }
+        
+        .history-item i {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f7fafc;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-header h2 {
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .chat-header span {
+            color: #4299e1;
+            margin-left: 5px;
+        }
+        
+        .clear-chat-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .clear-chat-btn:hover {
+            background: #c53030;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            max-width: 70%;
+            margin-bottom: 20px;
+            display: flex;
+        }
+        
+        .user-message {
+            margin-left: auto;
+        }
+        
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bot .message-content {
+            background: white;
+            border-top-left-radius: 4px;
+            color: #2d3748;
+        }
+        
+        .user .message-content {
+            background: #4299e1;
+            color: white;
+            border-top-right-radius: 4px;
+        }
+        
+        .message-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .message-info i {
+            margin-right: 8px;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            outline: none;
+            font-size: 15px;
+        }
+        
+        .chat-input button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .chat-input button:hover {
+            background: #3182ce;
+        }
+        
+        .uploaded-pdf {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .pdf-icon {
+            color: #e53e3e;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .pdf-info {
+            flex: 1;
+        }
+        
+        .pdf-info h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .pdf-info p {
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .chat-container {
+                width: 100%;
+                height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-file-pdf"></i>
+                <h1>PDF Chat</h1>
+            </div>
+            
+            <div class="upload-section">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & Drop your PDF here</p>
+                        <p>or</p>
+                        <button type="button" class="upload-btn" id="browseBtn">Browse Files</button>
+                        <input type="file" id="fileInput" name="file" accept=".pdf" style="display: none;">
+                    </div>
+                </form>
+                
+                <div class="uploaded-pdf" id="uploadedPdf" style="display: none;">
+                    <i class="fas fa-file-pdf pdf-icon"></i>
+                    <div class="pdf-info">
+                        <h3 id="pdfFileName">No PDF uploaded</h3>
+                        <p id="pdfUploadTime"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-section">
+                <h2>Recent Chats</h2>
+                <ul class="history-list" id="historyList">
+                    <li class="history-item">
+                        <i class="fas fa-comment"></i>
+                        Quarterly Financial Analysis
+                    </li>
+                    <li class="history-item">
+                        <i class="fas fa-comment"></i>
+                        Research Paper Discussion
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>Chat with <span id="currentPdfName">Your PDF</span></h2>
+                <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        <div class="message-info">
+                            <i class="fas fa-robot"></i>
+                            <strong>PDF Assistant</strong>
+                        </div>
+                        <p>Hello! Upload a PDF document to start chatting. I can help you analyze and answer questions about your document.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Ask something about your PDF..." disabled>
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadedPdf = document.getElementById('uploadedPdf');
+        const pdfFileName = document.getElementById('pdfFileName');
+        const pdfUploadTime = document.getElementById('pdfUploadTime');
+        const currentPdfName = document.getElementById('currentPdfName');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatMessages = document.getElementById('chatMessages');
+        const clearChatBtn = document.getElementById('clearChatBtn');
+        
+        // Event listeners
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileUpload);
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        clearChatBtn.addEventListener('click', clearChat);
+        
+        // Upload area drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4299e1';
+            uploadArea.style.backgroundColor = 'rgba(66, 153, 225, 0.1)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#4a5568';
+            uploadArea.style.backgroundColor = 'transparent';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4a5568';
+            uploadArea.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileUpload();
+            }
+        });
+        
+        // Handle file upload
+        function handleFileUpload() {
+            if (!fileInput.files.length) return;
+            
+            const file = fileInput.files[0];
+            if (file.type !== 'application/pdf') {
+                alert('Please upload a PDF file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Show loading state
+            const uploadText = uploadArea.querySelector('p');
+            const originalText = uploadText.innerHTML;
+            uploadText.innerHTML = '<div class="loading"></div> Uploading...';
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI with uploaded file info
+                    pdfFileName.textContent = file.name;
+                    pdfUploadTime.textContent = `Uploaded just now`;
+                    uploadedPdf.style.display = 'flex';
+                    currentPdfName.textContent = file.name;
+                    
+                    // Enable chat input
+                    messageInput.disabled = false;
+                    messageInput.placeholder = "Ask something about your PDF...";
+                    
+                    // Add success message
+                    addMessage('PDF uploaded successfully! You can now ask questions about this document.', 'bot');
+                } else {
+                    throw new Error(data.error || 'Upload failed');
+                }
+            })
+            .catch(error => {
+                alert('Error uploading file: ' + error.message);
+            })
+            .finally(() => {
+                uploadText.innerHTML = originalText;
+            });
+        }
+        
+        // Send chat message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            messageInput.value = '';
+            
+            // Show loading indicator in chat
+            const loadingMsg = addMessage('Thinking...', 'bot', true);
+            
+            // Send question to backend
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading indicator
+                chatMessages.removeChild(loadingMsg);
+                
+                if (data.success) {
+                    // Add bot response
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('Error: ' + (data.error || 'Failed to get response'), 'bot');
+                }
+            })
+            .catch(error => {
+                chatMessages.removeChild(loadingMsg);
+                addMessage('Error: Could not connect to the server', 'bot');
+            });
+        }
+        
+        // Add message to chat
+        function addMessage(text, sender, isLoading = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            
+            const messageInfo = document.createElement('div');
+            messageInfo.classList.add('message-info');
+            
+            const icon = document.createElement('i');
+            icon.classList.add('fas', sender === 'user' ? 'fa-user' : 'fa-robot');
+            
+            const strong = document.createElement('strong');
+            strong.textContent = sender === 'user' ? 'You' : 'PDF Assistant';
+            
+            messageInfo.appendChild(icon);
+            messageInfo.appendChild(strong);
+            
+            const paragraph = document.createElement('p');
+            
+            if (isLoading) {
+                const loadingSpan = document.createElement('span');
+                loadingSpan.classList.add('loading');
+                paragraph.appendChild(loadingSpan);
+                paragraph.appendChild(document.createTextNode(' ' + text));
+            } else {
+                paragraph.textContent = text;
+            }
+            
+            messageContent.appendChild(messageInfo);
+            messageContent.appendChild(paragraph);
+            
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageDiv;
+        }
+        
+        // Clear chat
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                // Clear frontend chat
+                while (chatMessages.firstChild) {
+                    chatMessages.removeChild(chatMessages.firstChild);
+                }
+                
+                // Add welcome message back
+                addMessage('Chat cleared. You can continue asking questions about your PDF.', 'bot');
+                
+                // Call backend to clear chat history
+                fetch('/clear', {
+                    method: 'POST'
+                })
+                .catch(error => {
+                    console.error('Error clearing chat history:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

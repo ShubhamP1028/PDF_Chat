@@ -1,48 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PDFQuery - Chat with your PDF</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Chat - Interactive Document Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1><b>PDF-Chat</b></h1>
-        <p>Upload a PDF and ask questions about its content</p>
-        
-        <div id="upload-section">
-            <form id="upload-form" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".pdf" required multiple="false">
-                <button type="submit">Upload & Process PDF</button>
-            </form>
-            <div id="upload-status"></div>
-        </div>
-        
-        <div id="chat-section" style="display: none;">
-            <div class="chat-header">
-                <h3>Chat with: <span id="current-filename"></span></h3>
-                <div class="document-controls">
-                    <button id="add-document-btn" class="control-btn">Add Document</button>
-                    <button id="new-session-btn" class="control-btn">New Session</button>
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-file-pdf"></i>
+                <h1 style="font-family: 'Cyber';">PAL</h1>
+            </div>
+            
+            <div class="upload-section">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & Drop your PDF here</p>
+                        <p>or</p>
+                        <button type="button" class="upload-btn" id="browseBtn">Browse Files</button>
+                        <input type="file" id="fileInput" name="file" accept=".pdf" multiple="false" style="display: none;">
+                    </div>
+                </form>
+                
+                <div class="uploaded-pdf" id="uploadedPdf" style="display: none;">
+                    <i class="fas fa-file-pdf pdf-icon"></i>
+                    <div class="pdf-info">
+                        <h3 id="pdfFileName">No PDF uploaded</h3>
+                        <p id="pdfUploadTime"></p>
+                    </div>
+                </div>
+                
+                <!-- Document Management Controls -->
+                <div class="document-controls" id="documentControls" style="display: none; margin-top: 15px;">
+                    <button id="addDocumentBtn" class="control-btn">
+                        <i class="fas fa-plus"></i> Add Document
+                    </button>
+                    <button id="newSessionBtn" class="control-btn new-session">
+                        <i class="fas fa-refresh"></i> New Session
+                    </button>
+                </div>
+                
+                <!-- Current Documents List -->
+                <div class="documents-list" id="documentsList" style="display: none;">
+                    <h4>Current Documents</h4>
+                    <div id="documentsContainer"></div>
                 </div>
             </div>
-            <div id="current-documents" class="documents-list"></div>
-            <div id="chat-container">
-                <div id="chat-messages"></div>
-                <form id="chat-form">
-                    <input type="text" id="message-input" placeholder="Ask something about the PDF...">
-                    <button type="submit">Send</button>
-                </form>
+            
+            <div class="history-section">
+                <h2>Recent Chats</h2>
+                <ul class="history-list" id="historyList">
+                    <!-- History items will be populated dynamically -->
+                </ul>
             </div>
         </div>
         
-        <!-- Hidden file input for adding documents -->
-        <input type="file" id="add-document-input" accept=".pdf" multiple="false" style="display: none;">
-        <input type="file" id="new-session-input" accept=".pdf" multiple="false" style="display: none;">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2 style="color: #ffffff;">Chat with Your <span id="currentPdfName" style="font-size: 22px;"> Documents</span></h2>
+                <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        <div class="message-info">
+                            <i class="fas fa-robot"></i>
+                            <strong>PDF Assistant</strong>
+                        </div>
+                        <p>Hello! Upload a PDF document to start chatting. I can help you analyze and answer questions about your document.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Ask something about your PDF..." disabled>
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
-    
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Hidden file inputs for document management -->
+    <input type="file" id="addDocumentInput" accept=".pdf" multiple="false" style="display: none;">
+    <input type="file" id="newSessionInput" accept=".pdf" multiple="false" style="display: none;">
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
-
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
