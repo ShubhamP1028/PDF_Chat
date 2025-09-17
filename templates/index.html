@@ -12,7 +12,7 @@
         <div class="sidebar">
             <div class="logo">
                 <i class="fas fa-file-pdf"></i>
-                <h1 style="font-family: 'Cyber';">PAL</h1>
+                <h1 style="font-family: 'Cyber';">PAL <span style="font-size: 12px;"><b>Shubham Pandey</b></span></h1>
             </div>
             
             <div class="upload-section">
@@ -36,9 +36,6 @@
                 
                 <!-- Document Management Controls -->
                 <div class="document-controls" id="documentControls" style="display: none; margin-top: 15px;">
-                    <button id="addDocumentBtn" class="control-btn">
-                        <i class="fas fa-plus"></i> Add Document
-                    </button>
                     <button id="newSessionBtn" class="control-btn new-session">
                         <i class="fas fa-refresh"></i> New Session
                     </button>
@@ -62,7 +59,10 @@
         <div class="chat-container">
             <div class="chat-header">
                 <h2 style="color: #ffffff;">Chat with Your <span id="currentPdfName" style="font-size: 22px;"> Documents</span></h2>
-                <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
+                <div class="header-controls">
+                    <button class="api-key-btn" id="apiKeyBtn">Set API Key</button>
+                    <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
+                </div>
             </div>
             
             <div class="chat-messages" id="chatMessages">
@@ -85,8 +85,23 @@
     </div>
 
     <!-- Hidden file inputs for document management -->
-    <input type="file" id="addDocumentInput" accept=".pdf" multiple="false" style="display: none;">
     <input type="file" id="newSessionInput" accept=".pdf" multiple="false" style="display: none;">
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 API Key Required</h3>
+            </div>
+            <div class="modal-body">
+                <p>Please enter your Gemini API key to use this application:</p>
+                <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key..." />
+                <p class="help-text">Your API key is stored only for this session and will be cleared when you close the browser.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="saveApiKey" class="save-btn">Save API Key & Continue</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>

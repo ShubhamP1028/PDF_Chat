@@ -15,10 +15,14 @@ const clearChatBtn = document.getElementById('clearChatBtn');
 const documentControls = document.getElementById('documentControls');
 const documentsList = document.getElementById('documentsList');
 const documentsContainer = document.getElementById('documentsContainer');
-const addDocumentBtn = document.getElementById('addDocumentBtn');
 const newSessionBtn = document.getElementById('newSessionBtn');
-const addDocumentInput = document.getElementById('addDocumentInput');
 const newSessionInput = document.getElementById('newSessionInput');
+const apiKeyBtn = document.getElementById('apiKeyBtn');
+const apiKeyModal = document.getElementById('apiKeyModal');
+const closeModal = document.getElementById('closeModal');
+const apiKeyInput = document.getElementById('apiKeyInput');
+const saveApiKey = document.getElementById('saveApiKey');
+const cancelApiKey = document.getElementById('cancelApiKey');
 
 // State management
 let currentDocuments = [];
@@ -32,10 +36,18 @@ messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 clearChatBtn.addEventListener('click', clearChat);
-addDocumentBtn.addEventListener('click', () => addDocumentInput.click());
 newSessionBtn.addEventListener('click', () => newSessionInput.click());
-addDocumentInput.addEventListener('change', handleAddDocument);
 newSessionInput.addEventListener('change', handleNewSession);
+apiKeyBtn.addEventListener('click', () => showApiKeyModal());
+saveApiKey.addEventListener('click', handleSaveApiKey);
+
+// Prevent modal from being closed by clicking outside or escape key
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && apiKeyModal.style.display === 'block') {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+});
 
 // Upload area drag and drop
 uploadArea.addEventListener('dragover', (e) => {
@@ -130,58 +142,7 @@ function handleFileUpload() {
     });
 }
 
-// Handle add document
-function handleAddDocument(e) {
-    if (e.target.files.length > 0) {
-        // Ensure only single file is processed
-        if (e.target.files.length > 1) {
-            alert('Please select only one file at a time.');
-            e.target.value = '';
-            return;
-        }
-        
-        const file = e.target.files[0];
-        if (file.type !== 'application/pdf') {
-            alert('Please upload a PDF file');
-            e.target.value = '';
-            return;
-        }
-        
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        // Show loading in add button
-        const originalText = addDocumentBtn.innerHTML;
-        addDocumentBtn.innerHTML = '<div class="loading"></div> Adding...';
-        addDocumentBtn.disabled = true;
-        
-        fetch('/add_document', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update documents list
-                currentDocuments = data.documents;
-                updateDocumentsList();
-                
-                // Show success message
-                addMessage(`✅ Document "${data.filename}" added successfully!`, 'bot');
-            } else {
-                throw new Error(data.error || 'Failed to add document');
-            }
-        })
-        .catch(error => {
-            alert('Error adding document: ' + error.message);
-        })
-        .finally(() => {
-            addDocumentBtn.innerHTML = originalText;
-            addDocumentBtn.disabled = false;
-            e.target.value = '';
-        });
-    }
-}
+// Removed handleAddDocument function as requested
 
 // Handle new session
 function handleNewSession(e) {
@@ -280,18 +241,33 @@ function sendMessage() {
             const markdownHtml = marked.parse(data.answer);
             const sanitizedHtml = DOMPurify.sanitize(markdownHtml);
             
-            // Create response container
+            // Create response container (removed confidence)
             let responseHtml = `
                 <div class="answer">${sanitizedHtml}</div>
-                <div class="confidence">Confidence: ${(data.confidence * 100).toFixed(1)}%</div>
             `;
             
             // Add page number and filename if available
             if (data.page_number) {
-                const sourceText = data.filename ? 
-                    `Source: ${data.filename} - Page ${data.page_number}` : 
-                    `Source: Page ${data.page_number}`;
+                const sourceText = data.filename && data.filename !== 'Unknown' ? 
+                    `📄 Source: ${data.filename} - Page ${data.page_number}` : 
+                    `📄 Source: Page ${data.page_number}`;
                 responseHtml += `<div class="source-page">${sourceText}</div>`;
+            }
+            
+            // Debug: Log source information
+            console.log('Response source info:', {
+                filename: data.filename,
+                page_number: data.page_number,
+                all_filenames: data.metadata?.all_filenames,
+                current_documents: currentDocuments
+            });
+            
+            // Show warning if filename doesn't match current documents
+            if (data.filename !== 'Unknown' && currentDocuments.length > 0 && !currentDocuments.includes(data.filename)) {
+                console.warn('WARNING: Source filename does not match current session documents!', {
+                    source_filename: data.filename,
+                    current_documents: currentDocuments
+                });
             }
             
             // Add bot response
@@ -386,8 +362,54 @@ function clearChat() {
     }
 }
 
+// Show API key modal with blur effect
+function showApiKeyModal() {
+    apiKeyModal.style.display = 'block';
+    document.body.classList.add('modal-open');
+    apiKeyInput.focus();
+}
+
+// Hide API key modal and remove blur effect
+function hideApiKeyModal() {
+    apiKeyModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+// Handle API key management
+function handleSaveApiKey() {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+        alert('Please enter a valid API key');
+        return;
+    }
+    
+    fetch('/set_api_key', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ api_key: apiKey })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            hideApiKeyModal();
+            apiKeyInput.value = '';
+            addMessage('✅ API key set successfully! You can now upload documents.', 'bot');
+        } else {
+            alert('Error setting API key: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error setting API key: ' + error.message);
+    });
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    // Show API key modal on first load with blur effect
+    showApiKeyModal();
+    
     // Check if there are any existing documents on page load
     fetch('/get_documents')
         .then(response => response.json())
@@ -399,6 +421,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 documentsList.style.display = 'block';
                 messageInput.disabled = false;
                 isSessionActive = true;
+                // Hide API key modal if session is active
+                hideApiKeyModal();
             }
         })
         .catch(error => {
